@@ -165,58 +165,60 @@ sudo dmesg | tail -3
 
 ### Screenshot 1 — Multi-container supervision
 Two containers (alpha running cpu_hog, beta running io_pulse) started under one supervisor process. Supervisor terminal shows both `started container` messages with distinct PIDs.
-<img width="799" height="163" alt="Screenshot from 2026-04-12 18-29-40" src="https://github.com/user-attachments/assets/cb95d416-e0b8-4533-a388-8c918331f3f6" />
 
-
-### Screenshot 2 — Metadata tracking
-Output of `engine ps` showing both containers with their PID, state, start time, soft limit, and hard limit columns populated correctly.
-<img width="802" height="142" alt="Screenshot from 2026-04-12 18-30-37" src="https://github.com/user-attachments/assets/734241f5-1484-4121-b3f5-ba0751d0029f" />
-
-
-### Screenshot 3 — Bounded-buffer logging
-`engine logs alpha` and `engine logs beta` showing full output captured from both containers through the producer→buffer→consumer pipeline. Log files `logs/alpha.log` and `logs/beta.log` visible in `ls -la logs/`.
-<img width="1275" height="806" alt="Screenshot from 2026-04-13 06-18-38" src="https://github.com/user-attachments/assets/73254e7e-f0a0-4e48-8a01-56bcc597045c" />
-
-<img width="1305" height="195" alt="Screenshot from 2026-04-13 06-18-50" src="https://github.com/user-attachments/assets/d8ba1671-4310-4e10-8ee7-b73a370ca0b0" />
-
-
-### Screenshot 4 — CLI and IPC
-`time sudo ./engine run alpha ./rootfs-alpha /cpu_hog` blocking for 9.8 seconds then printing `container 'alpha' exited state=exited code=0 sig=0`. Demonstrates the UNIX socket IPC path and blocking run semantics.
-<img width="805" height="275" alt="Screenshot from 2026-04-13 06-11-59" src="https://github.com/user-attachments/assets/7b70ff70-56aa-48da-9588-6a327002bc97" />
-
-
-### Screenshot 5 — Soft-limit warning
-`dmesg` output showing:
-```
-[container_monitor] Registering container=memtest pid=XXXX soft=10485760 hard=20971520
-[container_monitor] SOFT LIMIT container=memtest pid=XXXX rss=17297408 limit=10485760
-```
-<img width="1919" height="991" alt="Screenshot from 2026-04-13 15-53-09" src="https://github.com/user-attachments/assets/c2f996f7-a930-4b56-8d18-6c77f2f8fd53" />
-
-
-### Screenshot 6 — Hard-limit enforcement
-`dmesg` showing `HARD LIMIT` event followed by `engine ps` showing `state=killed` for the memtest container.
-
-<img width="1919" height="991" alt="Screenshot from 2026-04-13 15-53-09" src="https://github.com/user-attachments/assets/a931b0c4-8af0-48fe-abf4-6dabd962f34f" />
-
-
-### Screenshot 7 — Scheduling experiment
-Two cpu_hog containers running with nice=0 and nice=15, plus cpu_hog vs io_pulse comparison. Log outputs showing io_pulse completes in ~4 seconds while cpu_hog runs for the full 10 seconds.
-
-<img width="1160" height="640" alt="Screenshot from 2026-04-13 15-49-22" src="https://github.com/user-attachments/assets/7b2e4bed-7e0e-465c-ab62-09394747a358" />
-
-<img width="1272" height="662" alt="Screenshot from 2026-04-13 15-49-32" src="https://github.com/user-attachments/assets/7e8bf57e-fd6b-4c72-971b-e7ab10bd76c2" />
-
-
-
-### Screenshot 8 — Clean teardown
-`ps aux` showing no zombie or lingering container processes after supervisor shutdown, plus `[container_monitor] Module unloaded.` in dmesg.
+![Screenshot 1](screenshots/1.png)
 
 ---
 
-<img width="1919" height="991" alt="Screenshot from 2026-04-13 15-53-19" src="https://github.com/user-attachments/assets/e5773e3d-0084-4b0b-9281-88e698371e78" />
+### Screenshot 2 — Metadata tracking
+Output of `engine ps` showing both containers with their PID, state, start time, soft limit, and hard limit columns populated correctly.
 
-<img width="1919" height="166" alt="Screenshot from 2026-04-13 15-53-33" src="https://github.com/user-attachments/assets/5f23dd35-09ec-4bba-96a6-e83c4d323b4c" />
+![Screenshot 2](screenshots/2.png)
+
+---
+
+### Screenshot 3 — Bounded-buffer logging
+`engine logs alpha` and `engine logs beta` showing full output captured from both containers through the producer→buffer→consumer pipeline. Log files visible in logs directory.
+
+![Screenshot 3](screenshots/6.png)
+![Screenshot 4](screenshots/7.png)
+
+---
+
+### Screenshot 4 — CLI and IPC
+`engine run` blocking until completion and printing final exit status. Demonstrates UNIX socket IPC path and blocking run semantics.
+
+![Screenshot 5](screenshots/4.png)
+
+---
+
+### Screenshot 5 — Soft-limit warning
+Kernel `dmesg` output showing container registration and soft memory limit warning.
+
+![Screenshot 6](screenshots/15.png)
+
+---
+
+### Screenshot 6 — Hard-limit enforcement
+Kernel log showing hard limit event followed by metadata showing killed container.
+
+![Screenshot 7](screenshots/16.png)
+
+---
+
+### Screenshot 7 — Scheduling experiment
+Two CPU-bound containers with different priorities and CPU-bound vs I/O-bound comparison.
+
+![Screenshot 8](screenshots/12.png)
+![Screenshot 9](screenshots/13.png)
+
+---
+
+### Screenshot 8 — Clean teardown
+No zombie processes after shutdown and successful module unload.
+
+![Screenshot 10](screenshots/16.png)
+![Screenshot 11](screenshots/17.png)
 
 
 ## 4. Engineering Analysis
