@@ -7,7 +7,7 @@
 | Sachin S | PES2UG24CS422 |
 | Sai Arya AL | PES2UG24CS429 |
 
----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 2. Build, Load, and Run Instructions
 
@@ -159,7 +159,7 @@ sudo rmmod monitor
 sudo dmesg | tail -3
 ```
 
----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 3. Demo Screenshots
 
@@ -220,6 +220,7 @@ No zombie processes after shutdown and successful module unload.
 ![Screenshot 10](screenshots/16.png)
 ![Screenshot 11](screenshots/17.png)
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 4. Engineering Analysis
 
@@ -286,7 +287,7 @@ Both containers ran `cpu_hog` for 10 seconds simultaneously. Wall-clock completi
 **Experiment 2 — CPU-bound vs I/O-bound:**
 `cpu_hog` (CPU-bound) ran for the full 10 seconds. `io_pulse` (I/O-bound) completed all 20 iterations in approximately 4 seconds. The I/O-bound workload finished 2.5x faster because it voluntarily yields the CPU during `usleep()` calls between iterations. CFS tracks virtual runtime — a sleeping process accumulates a "deficit" and gets boosted priority when it wakes up. This ensures I/O-bound tasks get CPU immediately on wake-up, maintaining responsiveness while CPU-bound tasks fill the remaining time.
 
----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 5. Design Decisions and Tradeoffs
 
@@ -315,7 +316,7 @@ Both containers ran `cpu_hog` for 10 seconds simultaneously. Wall-clock completi
 **Tradeoff:** `nice()` affects the entire container process. CPU affinity (`sched_setaffinity`) would give finer control but is harder to demo with short workloads.
 **Justification:** nice values directly map to CFS weight, making the scheduler behavior predictable and explainable. The `--nice N` flag is exposed through the CLI making experiments reproducible.
 
----
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 6. Scheduler Experiment Results
 
